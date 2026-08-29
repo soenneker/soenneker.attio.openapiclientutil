@@ -4,39 +4,62 @@
 
 # Soenneker.Attio.OpenApiClientUtil
 
-Exposes a cached OpenAPI client instance.
+Creates and caches an authenticated `AttioOpenApiClient` using Microsoft dependency injection and configuration.
 
-## Install
+Use this package when an application wants the generated Attio client without manually constructing its `HttpClient`, authentication provider, and Kiota request adapter.
+
+## Installation
 
 ```bash
 dotnet add package Soenneker.Attio.OpenApiClientUtil
 ```
 
-## Quick start
+## Configuration
+
+```json
+{
+  "Attio": {
+    "ApiKey": "your-attio-access-token"
+  }
+}
+```
+
+Requests use `https://api.attio.com` and `Authorization: Bearer {token}` by default. `Attio:ClientBaseUrl`, `Attio:AuthHeaderName`, and `Attio:AuthHeaderValueTemplate` can override those values for a compatible proxy or alternate authentication scheme.
+
+## Registration
 
 ```csharp
 using Soenneker.Attio.OpenApiClientUtil.Registrars;
-using Microsoft.Extensions.DependencyInjection;
 
-var services = new ServiceCollection();
-var result = services.AddAttioOpenApiClientUtilAsSingleton();
+builder.Services.AddAttioOpenApiClientUtilAsSingleton();
 ```
 
-Adds `AttioOpenApiClientUtil` as a singleton service.
+The registrar also adds the required Attio HTTP client services. Use `AddAttioOpenApiClientUtilAsScoped()` if each DI scope should own a utility instance; the underlying HTTP client cache is still process-wide.
 
-## What you get
+## Usage
 
-- `IAttioOpenApiClientUtil` — Exposes a cached OpenAPI client instance.
-- `AttioOpenApiClientUtilRegistrar` — Registers the OpenAPI client utility for dependency injection.
+```csharp
+using Soenneker.Attio.OpenApiClientUtil.Abstract;
 
-## API at a glance
+public sealed class WorkspaceService(IAttioOpenApiClientUtil clientUtil)
+{
+    public async Task<string?> GetWorkspaceName(CancellationToken cancellationToken)
+    {
+        var client = await clientUtil.Get(cancellationToken);
+        var tokenInfo = await client.V2.Self.GetAsync(
+            cancellationToken: cancellationToken);
 
-| API | What it does | Result / important behavior |
-| --- | --- | --- |
-| `AttioOpenApiClientUtilRegistrar.AddAttioOpenApiClientUtilAsSingleton(services)` | Adds `AttioOpenApiClientUtil` as a singleton service. | The same service collection, so additional registrations can be chained. |
-| `AttioOpenApiClientUtilRegistrar.AddAttioOpenApiClientUtilAsScoped(services)` | Adds `AttioOpenApiClientUtil` as a scoped service. | The same service collection, so additional registrations can be chained. |
+        return tokenInfo?.WorkspaceName;
+    }
+}
+```
 
-## Practical notes
+## Lifecycle and configuration behavior
 
-- Reuse the registered client instead of constructing one per operation.
-- Dispose instances you own when their scope ends so held resources can be released.
+- The generated client is created on the first `Get()` call and reused afterward.
+- Concurrent first calls share the same asynchronous initialization.
+- Authentication configuration is read during initialization; later changes do not alter the cached client.
+- A missing API key fails initialization rather than creating an unauthenticated client.
+- Let the DI container dispose the utility. Disposal releases the cached generated client state.
+
+If you need complete control over the Kiota request adapter, authentication provider, or `HttpClient`, reference `Soenneker.Attio.OpenApiClient` directly instead.
