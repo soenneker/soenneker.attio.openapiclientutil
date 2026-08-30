@@ -14,7 +14,6 @@ using Soenneker.Utils.AsyncSingleton;
 
 namespace Soenneker.Attio.OpenApiClientUtil;
 
-/// <inheritdoc cref="IAttioOpenApiClientUtil"/>
 public sealed class AttioOpenApiClientUtil : IAttioOpenApiClientUtil
 {
     private readonly AsyncSingleton<AttioOpenApiClient> _client;

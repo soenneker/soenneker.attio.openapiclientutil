@@ -4,14 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 namespace Soenneker.Attio.OpenApiClientUtil.Abstract;
 /// <summary>
-/// Exposes a cached OpenAPI client instance.
+/// Creates and caches an authenticated <see cref="AttioOpenApiClient"/>.
 /// </summary>
 public interface IAttioOpenApiClientUtil: IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Returns the configured attio OpenAPI Client used by the Attio OpenAPI Client.
+    /// Gets the cached generated client, creating it on first use.
     /// </summary>
     /// <param name="cancellationToken">Token used to cancel the operation.</param>
-    /// <returns>A task whose result is the requested attio OpenAPI Client.</returns>
+    /// <returns>The cached Attio client.</returns>
     ValueTask<AttioOpenApiClient> Get(CancellationToken cancellationToken = default);
 }

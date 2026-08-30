@@ -1,6 +1,7 @@
 [![](https://img.shields.io/nuget/v/soenneker.attio.openapiclientutil.svg?style=for-the-badge)](https://www.nuget.org/packages/soenneker.attio.openapiclientutil/)
 [![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.attio.openapiclientutil/publish-package.yml?style=for-the-badge)](https://github.com/soenneker/soenneker.attio.openapiclientutil/actions/workflows/publish-package.yml)
 [![](https://img.shields.io/nuget/dt/soenneker.attio.openapiclientutil.svg?style=for-the-badge)](https://www.nuget.org/packages/soenneker.attio.openapiclientutil/)
+[![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.attio.openapiclientutil/codeql.yml?label=CodeQL&style=for-the-badge)](https://github.com/soenneker/soenneker.attio.openapiclientutil/actions/workflows/codeql.yml)
 
 # Soenneker.Attio.OpenApiClientUtil
 
@@ -61,5 +62,6 @@ public sealed class WorkspaceService(IAttioOpenApiClientUtil clientUtil)
 - Authentication configuration is read during initialization; later changes do not alter the cached client.
 - A missing API key fails initialization rather than creating an unauthenticated client.
 - Let the DI container dispose the utility. Disposal releases the cached generated client state.
+- Disposing a scoped utility does not remove the `HttpClient` owned by the singleton HTTP-client cache.
 
 If you need complete control over the Kiota request adapter, authentication provider, or `HttpClient`, reference `Soenneker.Attio.OpenApiClient` directly instead.
