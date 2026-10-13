@@ -25,7 +25,7 @@ public sealed class AttioOpenApiClientUtil : IAttioOpenApiClientUtil
         {
             HttpClient httpClient = await httpClientUtil.Get(token).NoSync();
 
-            var apiKey = configuration.GetValueStrict<string>("Attio:ApiKey");
+            var apiKey = configuration.GetStringStrict("Attio:ApiKey");
             string authHeaderName = configuration["Attio:AuthHeaderName"] ?? "Authorization";
             string authHeaderValueTemplate = configuration["Attio:AuthHeaderValueTemplate"] ?? "Bearer {token}";
             string authHeaderValue = authHeaderValueTemplate.Replace("{token}", apiKey, StringComparison.Ordinal);
