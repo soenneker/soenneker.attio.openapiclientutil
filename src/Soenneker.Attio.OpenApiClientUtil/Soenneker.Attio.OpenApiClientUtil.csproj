@@ -46,8 +46,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Kiota.GenericAuthenticationProvider" Version="11.0.60" />
-        <PackageReference Include="Soenneker.Attio.HttpClients" Version="11.0.99" />
-        <PackageReference Include="Soenneker.Attio.OpenApiClient" Version="11.0.69" />
+        <PackageReference Include="Soenneker.Kiota.GenericAuthenticationProvider" Version="11.0.61" />
+        <PackageReference Include="Soenneker.Attio.HttpClients" Version="11.0.100" />
+        <PackageReference Include="Soenneker.Attio.OpenApiClient" Version="11.0.70" />
     </ItemGroup>
 </Project>
